@@ -58,7 +58,11 @@ public class WhatsappRepository {
     public int createMessage(String content) {
         int size = messageHashMap.size();
 
-        Message message = new Message(size+1, content, new Date());
+        Message message = new Message();
+        message.setId(size+1);
+        message.setContent(content);
+        Date currDate = new Date();
+        message.setTimestamp(currDate);
 
         messageHashMap.put(size+1, message);
 
@@ -67,6 +71,7 @@ public class WhatsappRepository {
 
     public int sendMessage(Message message, User sender, Group group) {
         // if group is not exist then return exception
+
         if(groupUsersDb.containsKey(group))
             throw new RuntimeException("Group does not exist");
 
