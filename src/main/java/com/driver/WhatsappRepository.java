@@ -69,17 +69,17 @@ public class WhatsappRepository {
         return size+1;
     }
 
-    public int sendMessage(Message message, User sender, Group group) {
+    public int sendMessage(Message message, User sender, Group group) throws Exception {
         // if group is not exist then return exception
 
         if(groupUsersDb.containsKey(group))
-            throw new RuntimeException("Group does not exist");
+            throw new Exception("Group does not exist");
 
         // check sender is not exist then return exception
         List<User> users = groupUsersDb.get(group);
 
         if(!users.contains(sender))
-            throw new RuntimeException("You are not allowed to send message");
+            throw new Exception("You are not allowed to send message");
 
         List<Message> messageList = groupToMessagesDb.get(group);
         messageList.add(message);
@@ -90,20 +90,20 @@ public class WhatsappRepository {
 
     }
 
-    public String changeAdmin(User approver, User user, Group group) {
+    public String changeAdmin(User approver, User user, Group group) throws Exception {
         // if group does not exist then
         if(groupUsersDb.containsKey(group))
-            throw new RuntimeException("Group does not exist");
+            throw new Exception("Group does not exist");
 
         // if approver does not exist
         if(groupAdminDB.get(group) != approver)
-            throw new RuntimeException("Approver does not have rights");
+            throw new Exception("Approver does not have rights");
 
         // if user is not part of group then return exception
 
         List<User> userList = groupUsersDb.get(group);
         if(!userList.contains(user))
-            throw new RuntimeException("User is not a participant");
+            throw new Exception("User is not a participant");
 
         // change the admin of group and change all required db
         groupAdminDB.remove(group);
@@ -112,7 +112,7 @@ public class WhatsappRepository {
         return "SUCCESS";
     }
 
-    public int removeUser(User user) {
+    public int removeUser(User user) throws Exception {
         Boolean flag = false;
 
         List<Message> messageList = new ArrayList<>();
@@ -132,7 +132,7 @@ public class WhatsappRepository {
         for(Group group : groupUsersDb.keySet()){
 
             if(groupAdminDB.get(group).equals(user)){
-                throw new RuntimeException("Cannot remove admin");
+                throw new Exception("Cannot remove admin");
             }
             List<User> userList = groupUsersDb.get(group);
             if(userList.contains(user)){
@@ -143,7 +143,7 @@ public class WhatsappRepository {
             }
         }
         if (!flag){
-            throw new RuntimeException("User not found");
+            throw new Exception("User not found");
         }
 
         List<Message> messages = groupToMessagesDb.get(userGroup);
@@ -156,7 +156,7 @@ public class WhatsappRepository {
         return groupUsersDb.get(userGroup).size() + groupToMessagesDb.get(userGroup).size() + senderMap.size();
     }
 
-    public String findMessage(Date start, Date end, int k) {
+    public String findMessage(Date start, Date end, int k) throws Exception {
         //This is a bonus problem and does not contain any marks
         // Find the Kth the latest message between start and end (excluding start and end)
         // If the number of messages between given time is less than K, throw "K is greater than the number of messages" exception
@@ -170,7 +170,7 @@ public class WhatsappRepository {
             }
         }
         if (messageList.size() < k){
-            throw  new RuntimeException("K is greater than the number of messages");
+            throw  new Exception("K is greater than the number of messages");
         }
 
         Map<Date , Message> hm = new HashMap<>();
